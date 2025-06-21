@@ -29,7 +29,7 @@ This webpage allows you to:
 ### 🛠 Built With
 
 - HTML5  
-- CSS3  
+- CSS  
 - JavaScript
 - [ipinfo.io](https://ipinfo.io) API  
 
