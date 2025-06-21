@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>IP Catcher</title>
+	<style>
+	html, body {
+		background-color: #252525; 
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 100vw;
+		height: 100vh;
+		margin: 0;
+		padding: 0;
+		overflow: hidden; /* Disable scrolling */
+	}
+
+	#app {
+		width: 100%;
+		max-width: 600px;
+		transform: translateY(-5vh); /* Move content up */
+	}
+
+	#app_title h2 {
+		color: violet;
+		text-align: center;
+		margin: 20px;
+		font-size: 35px;
+		font-weight: bold;
+		animation: colorChange 3s infinite linear;
+	}
+
+	@keyframes colorChange {
+		0%   { color: violet; }
+		20%  { color: cyan; }
+		40%  { color: lime; }
+		60%  { color: yellow; }
+		80%  { color: orange; }
+		100% { color: red; }
+	}
+
+	h2 {
+		color: violet;
+		text-align: center;
+		margin: 20px;
+		font-size: 35px;
+		font-weight: bold;
+	}
+
+	#result {
+		font-weight: bold;
+		background-color: gray;
+		color: violet;
+		padding: 10px;
+		margin-bottom: 20px;
+		text-align: center;
+		display: none;
+		border: inset 1px #252525;
+	}
+
+	input {
+		margin-top: 10px;
+		padding: 5px;
+		font-size: 20px;
+		font-weight: bold;
+		height: 40px;
+		text-align: center;
+		border-radius: 5px;
+		width: 90%;
+	}
+
+	.txt {
+		margin-top: 1%;
+		margin-left: auto;
+		margin-right: auto;
+		font-size: 20px;
+		color: white;
+		text-align: center;
+		margin: 5px;
+		border: #252525 2px outset;
+		padding: 10px;
+	}
+
+	button {
+		margin:5px;
+		padding: 10px;
+		font-size: 16px;
+		width: 100px;
+		background-color: #0096FF;
+		color: black;
+		border: none;
+		height: 30px;
+		border-radius: 5px;
+		transition-duration: 0.4s;
+		font-size: 12px;
+		font-weight: bold;
+	}
+
+	button:hover {
+		background-color: #4CAF50;
+		color: white;
+	}
+
+	#form_and_result {
+		display: grid;
+		grid-template-columns:50% 50%;
+		text-align: center;
+		justify-content: center;
+	}
+
+	#form_in, #result_b {
+		border: #252525 outset 1px;
+		padding: 10px;
+		margin: 8px;
+		width: 90%;
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	@media (max-width: 500px) {
+		#app_title h2 {
+			font-size: 24px;
+		}
+		h2 {
+			color: violet;
+			text-align: center;
+			margin: 5px;	
+			font-size: 20px;
+			font-weight: bold;
+		}
+		#form_and_result {
+			grid-template-columns:100%;
+		}
+		#form_in, #result_b {
+			width: 80%;
+		}
+		input {
+			margin:3px;
+			padding: 3px;
+			font-size: 15px;
+			font-weight: bold;
+			text-align: center;
+			border-radius: 5px;
+			border:none;
+			outline:none;
+		}
+		.txt {
+			font-size: 20px;
+			width:80%;
+			margin-left:auto;
+			margin-right:auto;
+		}
+	}
+	</style>
+</head>
+<body>
+
+<div id="app">
+	<div id="app_title"><h2>IP CATCHER</h2></div>
+	<div id="form_and_result">
+		<div id="form_in">
+			<h2>Get Ip</h2>
+			<input type="text" id="ipAddressInput" placeholder="Fetching IP..." oninput="checkInput()"><br/>
+			<button id="ipButton" onclick="getIPAddress()">Get IP</button><br/>
+			<input type="text" id="ipInput" placeholder="Enter IP Address"><br/>
+			<button onclick="getCountry()">Get Country</button>
+		</div>
+		<div id="result_b">   
+			<h2>Result</h2>
+			<p id="result"></p>
+		</div>
+	</div>
+	<p class="txt">&copy; Hanz</p>
+</div>
+
+<script>
+	let copied = false;
+
+	function getIPAddress() {
+		const ipInput = document.getElementById('ipAddressInput');
+		const ipButton = document.getElementById('ipButton');
+
+		ipInput.value = 'Please wait...';
+		ipButton.disabled = true;
+
+		fetch('https://ipinfo.io/json')
+			.then(response => response.json())
+			.then(data => {
+				ipInput.value = data.ip;
+				ipButton.textContent = 'COPY';
+				ipButton.disabled = false;
+				ipButton.onclick = copyToClipboard;
+				copied = false;
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				ipInput.value = 'Error';
+				ipButton.disabled = false;
+			});
+	}
+
+	function copyToClipboard() {
+		const ipInput = document.getElementById('ipAddressInput');
+		const ipButton = document.getElementById('ipButton');
+
+		ipInput.select();
+		ipInput.setSelectionRange(0, 99999);
+		document.execCommand('copy');
+
+		ipButton.textContent = 'COPIED ✓';
+		ipButton.style.backgroundColor = '#4CAF50';
+		ipButton.style.color = 'white';
+		copied = true;
+	}
+
+	function checkInput() {
+		const ipInput = document.getElementById('ipAddressInput');
+		const ipButton = document.getElementById('ipButton');
+
+		if (copied || ipButton.textContent !== 'Get IP') {
+			ipButton.textContent = 'Get IP';
+			ipButton.onclick = getIPAddress;
+			ipButton.style.backgroundColor = '#0096FF';
+			ipButton.style.color = 'black';
+			copied = false;
+		}
+	}
+
+	function getCountry() {
+		const ipSource = document.getElementById('ipAddressInput').value;
+		const ipInput = document.getElementById('ipInput');
+		const result = document.getElementById('result');
+
+		ipInput.value = ipSource;
+
+		if (!ipInput.value) {
+			result.textContent = 'Please enter an IP address.';
+			result.style.display = 'block';
+			return;
+		}
+
+		fetch(`https://ipinfo.io/${ipInput.value}/json`)
+			.then(response => response.json())
+			.then(data => {
+				const country = data.country || 'Not available';
+				result.textContent = `Country: ${country}`;
+				result.style.display = 'block';
+			})
+			.catch(error => {
+				console.error('Error fetching data:', error);
+				result.textContent = 'Error fetching data. Please try again.';
+				result.style.display = 'block';
+			});
+	}
+</script>
+
+</body>
+</html>
