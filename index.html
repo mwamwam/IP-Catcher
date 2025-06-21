@@ -244,8 +244,12 @@
 		fetch(`https://ipinfo.io/${ipInput.value}/json`)
 			.then(response => response.json())
 			.then(data => {
-				const country = data.country || 'Not available';
-				result.textContent = `Country: ${country}`;
+				const countryCode = data.country || 'N/A';
+				const regionNames = new Intl.DisplayNames(['en'], { type: 'region' });
+				const countryName = regionNames.of(countryCode);
+				const countryFlag = getFlagEmoji(countryCode);
+
+				result.textContent = `Country: ${countryName} ${countryFlag}`;
 				result.style.display = 'block';
 			})
 			.catch(error => {
@@ -253,6 +257,12 @@
 				result.textContent = 'Error fetching data. Please try again.';
 				result.style.display = 'block';
 			});
+	}
+
+	function getFlagEmoji(countryCode) {
+		if (!countryCode || countryCode.length !== 2) return '';
+		const codePoints = [...countryCode.toUpperCase()].map(c => 127397 + c.charCodeAt());
+		return String.fromCodePoint(...codePoints);
 	}
 </script>
 
