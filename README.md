@@ -11,8 +11,7 @@ This webpage allows you to:
 
 ### 🔗 Live Demo
 
-👉 [View IP Catcher on GitHub Pages]("")  
-*Replace `your-username` with your actual GitHub username.*
+👉 [View IP Catcher on GitHub Pages]("")
 
 ---
 
